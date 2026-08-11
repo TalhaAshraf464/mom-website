@@ -8,12 +8,13 @@
 - Warm sand/gold call-to-action buttons.
 - Portrait-led hero with generous whitespace and a soft lavender accent block.
 - Emulate the mood and spacing, but do not copy the exact layout or content.
+-screenshot has been provided which you can use as a visual guide
 
 ## Proposed Pages
 
 - Home: large photo of Sania Asif, intro placeholder text, video section with YouTube embeds.
 - Testimonials: text testimonials plus video testimonials.
-- Conditions: text/video information for anxiety, depression, OCD, addiction, and related topics.
+- Conditions: text/video information for anxiety, depression, OCD, addiction, and related topics. The boxes should be clickable and lead to blog style pages with a full blog on each issue. There should be a system for blogs where I can keep adding blog posts seamlessly over time. The blogs should be very acecessible and easy for site viewerrs to navigate to.
 - Contact: contact details, appointment CTA, and optional map/social links.
 
 ## Open Questions
@@ -72,6 +73,5 @@
 
 18. Do you already know where this will be hosted?
    -github pages
-
 
 

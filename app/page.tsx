@@ -1,32 +1,9 @@
-const areasOfCare = [
-  {
-    number: "01",
-    title: "Addiction & recovery",
-    description:
-      "Placeholder copy for addiction rehabilitation, relapse prevention, and long-term recovery support.",
-  },
-  {
-    number: "02",
-    title: "Anxiety & depression",
-    description:
-      "Placeholder copy for compassionate, evidence-informed care for anxiety, depression, and emotional overwhelm.",
-  },
-  {
-    number: "03",
-    title: "OCD & related concerns",
-    description:
-      "Placeholder copy for assessment, treatment planning, and practical support for OCD and related concerns.",
-  },
-  {
-    number: "04",
-    title: "Family support",
-    description:
-      "Placeholder copy for families navigating addiction, recovery, difficult transitions, and relationship strain.",
-  },
-];
+import { SiteFooter } from "./components/SiteFooter";
+import { SiteHeader } from "./components/SiteHeader";
+import { blogPosts } from "@/content/blog-posts";
 
 const videos = [
-  { number: "01", title: "Understanding the recovery journey", length: "Video placeholder" },
+  { number: "01", title: "Understanding the recovery journey", length: "Featured video" },
   { number: "02", title: "When anxiety starts to take over", length: "Video placeholder" },
   { number: "03", title: "How families can offer support", length: "Video placeholder" },
 ];
@@ -34,24 +11,7 @@ const videos = [
 export default function Home() {
   return (
     <main>
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Sania Asif home">
-          <span className="brand-mark" aria-hidden="true">SA</span>
-          <span className="brand-copy">
-            <strong>Sania Asif</strong>
-            <small>Clinical Psychologist</small>
-          </span>
-        </a>
-
-        <nav className="primary-nav" aria-label="Primary navigation">
-          <a href="#about">About</a>
-          <a href="#care">Areas of care</a>
-          <a href="#videos">Videos</a>
-          <a href="#contact">Contact</a>
-        </nav>
-
-        <a className="header-action" href="#contact">Get in touch</a>
-      </header>
+      <SiteHeader current="home" />
 
       <section className="hero" id="top">
         <div className="hero-copy">
@@ -87,6 +47,92 @@ export default function Home() {
             </figcaption>
           </figure>
         </div>
+
+        <a className="scroll-cue" href="#videos">
+          <span>Scroll to watch</span>
+          <span className="scroll-cue-line" aria-hidden="true" />
+        </a>
+      </section>
+
+      <section className="video-section video-section-featured" id="videos">
+        <div className="section-heading video-heading">
+          <div>
+            <p className="eyebrow">Watch &amp; learn</p>
+            <h2>Start with a conversation.</h2>
+          </div>
+          <p>
+            YouTube videos can be added here to introduce Sania&apos;s work and
+            answer common questions in a clear, approachable way.
+          </p>
+        </div>
+
+        <div className="video-grid video-grid-featured">
+          {videos.map((video, index) => (
+            <article className={`video-card${index === 0 ? " is-featured" : ""}`} key={video.number}>
+              <div className="video-poster">
+                <span className="video-index">{video.number}</span>
+                <span className="play-button" aria-hidden="true" />
+                <span className="video-duration">YouTube</span>
+              </div>
+              <div className="video-meta">
+                <h3>{video.title}</h3>
+                <span>{video.length}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="testimonial-gateway" id="testimonials">
+        <div className="testimonial-gateway-copy">
+          <p className="eyebrow">Shared in confidence</p>
+          <h2>Stories from people who found a way forward.</h2>
+          <p>
+            Placeholder introduction for anonymous written and video testimonials
+            from past patients and their families.
+          </p>
+        </div>
+        <div className="testimonial-links">
+          <a href="/testimonials#stories">
+            <span>01</span>
+            <strong>Read anonymous stories</strong>
+            <i aria-hidden="true">&#8599;</i>
+          </a>
+          <a href="/testimonials#video-stories">
+            <span>02</span>
+            <strong>Watch video testimonials</strong>
+            <i aria-hidden="true">&#8599;</i>
+          </a>
+        </div>
+      </section>
+
+      <section className="blog-preview" id="blog">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">From the blog</p>
+            <h2>Clear guidance for difficult moments.</h2>
+          </div>
+          <div className="section-side-copy">
+            <p>Explore placeholder articles about common concerns, recovery, and emotional wellbeing.</p>
+            <a className="text-link" href="/blog">View all articles <span aria-hidden="true">&#8599;</span></a>
+          </div>
+        </div>
+
+        <div className="blog-grid">
+          {blogPosts.map((post) => (
+            <article className="blog-card" key={post.slug}>
+              <a href={`/blog/${post.slug}`}>
+                <span className="blog-number">{post.number}</span>
+                <div>
+                  <p className="blog-category">{post.category}</p>
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                </div>
+                <span className="blog-read">Read article <i aria-hidden="true">&#8599;</i></span>
+              </a>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="practice-strip" aria-label="Practice overview">
@@ -114,32 +160,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="care-section" id="care">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Areas of care</p>
-            <h2>Support for the whole person.</h2>
-          </div>
-          <p>
-            Replace this short introduction with a concise overview of the main
-            concerns and recovery needs supported in practice.
-          </p>
-        </div>
-
-        <div className="care-grid">
-          {areasOfCare.map((area) => (
-            <article className="care-item" key={area.number}>
-              <span className="care-number">{area.number}</span>
-              <h3>{area.title}</h3>
-              <p>{area.description}</p>
-              <a href="#contact" aria-label={`Ask about ${area.title}`}>
-                Ask about this <span aria-hidden="true">&#8599;</span>
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <section className="approach-band">
         <p className="eyebrow">Her approach</p>
         <blockquote>
@@ -147,35 +167,6 @@ export default function Home() {
           and creating meaningful change without judgment.&rdquo;
         </blockquote>
         <p className="quote-credit">Sania Asif, Clinical Psychologist</p>
-      </section>
-
-      <section className="video-section" id="videos">
-        <div className="section-heading video-heading">
-          <div>
-            <p className="eyebrow">Watch &amp; learn</p>
-            <h2>Helpful conversations.</h2>
-          </div>
-          <p>
-            YouTube videos can be added here to introduce Sania&apos;s work and
-            answer common questions in a clear, approachable way.
-          </p>
-        </div>
-
-        <div className="video-grid">
-          {videos.map((video) => (
-            <article className="video-card" key={video.number}>
-              <div className="video-poster">
-                <span className="video-index">{video.number}</span>
-                <span className="play-button" aria-hidden="true" />
-                <span className="video-duration">YouTube</span>
-              </div>
-              <div className="video-meta">
-                <h3>{video.title}</h3>
-                <span>{video.length}</span>
-              </div>
-            </article>
-          ))}
-        </div>
       </section>
 
       <section className="contact-section" id="contact">
@@ -195,14 +186,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer>
-        <div className="footer-brand">
-          <strong>Sania Asif</strong>
-          <span>Clinical Psychologist</span>
-        </div>
-        <p>Karachi, Pakistan <span aria-hidden="true">&middot;</span> Online worldwide</p>
-        <p className="footer-note">Contact details and social links will be added here.</p>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
