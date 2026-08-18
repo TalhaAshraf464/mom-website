@@ -38,8 +38,8 @@ export default function Home() {
           <div className="portrait-accent" aria-hidden="true" />
           <figure>
             <img
-              src="/sania-asif-portrait-placeholder.png"
-              alt="Placeholder portrait for Sania Asif"
+              src="/sania-asif-portrait.jpeg"
+              alt="Sania Asif, Clinical Psychologist"
             />
             <figcaption>
               <span>Clinical practice</span>
