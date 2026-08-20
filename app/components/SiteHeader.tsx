@@ -5,7 +5,7 @@ type SiteHeaderProps = {
 const navigation = [
   { label: "Home", href: "/", key: "home" },
   { label: "Videos", href: "/#videos", key: "videos" },
-  { label: "Testimonials", href: "/testimonials", key: "testimonials" },
+  { label: "Testimonials", href: "/#testimonials", key: "testimonials" },
   { label: "Blog", href: "/blog", key: "blog" },
   { label: "About", href: "/#about", key: "about" },
   { label: "Contact", href: "/#contact", key: "contact" },

@@ -9,6 +9,16 @@ const videos = [
   { id: "Nyqhzf3zhxw", number: "03", title: "Why intelligent kids struggle with simple tasks" },
 ];
 
+const writtenTestimonials = [
+  { number: "01", title: "Written testimonial 01" },
+  { number: "02", title: "Written testimonial 02" },
+];
+
+const videoTestimonials = [
+  { id: "hEHHrs-zUdE", number: "01", title: "Client testimonial 01" },
+  { id: "cFPRjL5qYJ8", number: "02", title: "Client testimonial 02" },
+];
+
 export default function Home() {
   return (
     <main>
@@ -80,26 +90,61 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="testimonial-gateway" id="testimonials">
-        <div className="testimonial-gateway-copy">
-          <p className="eyebrow">Shared in confidence</p>
-          <h2>Stories from people who found a way forward.</h2>
-          <p>
-            Placeholder introduction for anonymous written and video testimonials
-            from past patients and their families.
-          </p>
-        </div>
-        <div className="testimonial-links">
-          <a href="/testimonials#stories">
-            <span>01</span>
-            <strong>Read anonymous stories</strong>
-            <i aria-hidden="true">&#8599;</i>
-          </a>
-          <a href="/testimonials#video-stories">
-            <span>02</span>
-            <strong>Watch video testimonials</strong>
-            <i aria-hidden="true">&#8599;</i>
-          </a>
+      <section className="testimonial-gateway testimonial-home" id="testimonials">
+        <div className="testimonial-home-inner">
+          <div className="testimonial-home-intro">
+            <div className="testimonial-gateway-copy">
+              <p className="eyebrow">Shared in confidence</p>
+              <h2>Stories from people who found a way forward.</h2>
+            </div>
+            <p>
+              Personal experiences can be shared anonymously, with care taken
+              to protect each person&apos;s privacy and dignity.
+            </p>
+          </div>
+
+          <div className="testimonial-subheading">
+            <p className="eyebrow">Written experiences</p>
+            <h3>In their own words.</h3>
+          </div>
+          <div className="homepage-testimonial-stories">
+            {writtenTestimonials.map((testimonial) => (
+              <blockquote key={testimonial.number}>
+                <span>{testimonial.number}</span>
+                <p>Approved testimonial text will appear here.</p>
+                <cite>{testimonial.title} &middot; Shared anonymously</cite>
+              </blockquote>
+            ))}
+          </div>
+
+          <div className="testimonial-subheading testimonial-video-heading">
+            <p className="eyebrow">Video stories</p>
+            <h3>Listen to their experiences.</h3>
+          </div>
+          <div className="video-grid testimonial-home-video-grid shorts-grid">
+            {videoTestimonials.map((video) => (
+              <YouTubeShort
+                id={video.id}
+                index={video.number}
+                key={video.id}
+                label="Client story"
+                title={video.title}
+              />
+            ))}
+            <article className="video-card short-video-card testimonial-video-placeholder">
+              <div className="short-video-frame testimonial-placeholder-frame" aria-label="Space reserved for a third video testimonial">
+                <span>03</span>
+                <p>Next client story</p>
+              </div>
+              <div className="video-meta">
+                <div>
+                  <span className="video-number">03</span>
+                  <h3>Client testimonial 03</h3>
+                </div>
+                <span>Reserved</span>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 

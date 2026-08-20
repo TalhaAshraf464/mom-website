@@ -35,6 +35,11 @@ test("server-renders the Sania Asif homepage", async () => {
   assert.match(html, /Scroll to watch/i);
   assert.match(html, /Watch &amp; learn/i);
   assert.match(html, /Stories from people who found a way forward/i);
+  assert.match(html, /Written testimonial 01/i);
+  assert.match(html, /Written testimonial 02/i);
+  assert.match(html, /Client testimonial 01/i);
+  assert.match(html, /Client testimonial 02/i);
+  assert.match(html, /Client testimonial 03/i);
   assert.match(html, /From the blog/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
