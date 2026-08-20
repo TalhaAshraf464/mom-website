@@ -80,7 +80,6 @@ export default function Home() {
         <div className="video-grid video-grid-featured shorts-grid">
           {videos.map((video) => (
             <YouTubeShort
-              autoPlay={video.number === "01"}
               id={video.id}
               index={video.number}
               key={video.id}
@@ -125,7 +124,6 @@ export default function Home() {
           <div className="video-grid testimonial-home-video-grid shorts-grid">
             {videoTestimonials.map((video) => (
               <YouTubeShort
-                autoPlay={video.number === "01"}
                 id={video.id}
                 index={video.number}
                 key={video.id}
