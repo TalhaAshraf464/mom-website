@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
+import { YouTubeShort } from "../components/YouTubeShort";
 
 export const metadata: Metadata = {
   title: "Testimonials | Sania Asif",
-  description: "Anonymous written and video testimonial placeholders for Sania Asif's practice.",
+  description: "Written and video testimonials from clients of Sania Asif's practice.",
 };
 
 const testimonials = [
   "Placeholder testimonial about feeling heard, respected, and supported throughout the recovery process.",
   "Placeholder testimonial about receiving practical help during a difficult period of anxiety or depression.",
   "Placeholder testimonial from a family member about gaining clarity, boundaries, and hope.",
+];
+
+const videoTestimonials = [
+  { id: "hEHHrs-zUdE", number: "01", title: "Client testimonial 01" },
+  { id: "cFPRjL5qYJ8", number: "02", title: "Client testimonial 02" },
 ];
 
 export default function TestimonialsPage() {
@@ -48,18 +54,17 @@ export default function TestimonialsPage() {
             <p className="eyebrow">Video stories</p>
             <h2>Listen to their experiences.</h2>
           </div>
-          <p>MP4 testimonials can be placed over an approved still image here.</p>
+          <p>Personal experiences shared by clients in their own words.</p>
         </div>
-        <div className="video-grid testimonial-video-grid">
-          {["Video testimonial one", "Video testimonial two"].map((title, index) => (
-            <article className="video-card" key={title}>
-              <div className="video-poster">
-                <span className="video-index">0{index + 1}</span>
-                <span className="play-button" aria-hidden="true" />
-                <span className="video-duration">MP4 placeholder</span>
-              </div>
-              <div className="video-meta"><h3>{title}</h3><span>Anonymous</span></div>
-            </article>
+        <div className="video-grid testimonial-video-grid shorts-grid">
+          {videoTestimonials.map((video) => (
+            <YouTubeShort
+              id={video.id}
+              index={video.number}
+              key={video.id}
+              label="Client story"
+              title={video.title}
+            />
           ))}
         </div>
       </section>

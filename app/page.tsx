@@ -1,11 +1,12 @@
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
+import { YouTubeShort } from "./components/YouTubeShort";
 import { blogPosts } from "@/content/blog-posts";
 
 const videos = [
-  { number: "01", title: "Understanding the recovery journey", length: "Featured video" },
-  { number: "02", title: "When anxiety starts to take over", length: "Video placeholder" },
-  { number: "03", title: "How families can offer support", length: "Video placeholder" },
+  { id: "PAVBdSP2xRw", number: "01", title: "Emotional Abuse" },
+  { id: "FXht3EScIIQ", number: "02", title: "Video about Depression" },
+  { id: "Nyqhzf3zhxw", number: "03", title: "Why intelligent kids struggle with simple tasks" },
 ];
 
 export default function Home() {
@@ -61,24 +62,20 @@ export default function Home() {
             <h2>Start with a conversation.</h2>
           </div>
           <p>
-            YouTube videos can be added here to introduce Sania&apos;s work and
-            answer common questions in a clear, approachable way.
+            Short, thoughtful guidance from Sania on emotional wellbeing,
+            mental health, and the challenges families can face.
           </p>
         </div>
 
-        <div className="video-grid video-grid-featured">
-          {videos.map((video, index) => (
-            <article className={`video-card${index === 0 ? " is-featured" : ""}`} key={video.number}>
-              <div className="video-poster">
-                <span className="video-index">{video.number}</span>
-                <span className="play-button" aria-hidden="true" />
-                <span className="video-duration">YouTube</span>
-              </div>
-              <div className="video-meta">
-                <h3>{video.title}</h3>
-                <span>{video.length}</span>
-              </div>
-            </article>
+        <div className="video-grid video-grid-featured shorts-grid">
+          {videos.map((video) => (
+            <YouTubeShort
+              id={video.id}
+              index={video.number}
+              key={video.id}
+              label="YouTube Short"
+              title={video.title}
+            />
           ))}
         </div>
       </section>
