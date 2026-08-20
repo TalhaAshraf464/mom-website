@@ -10,12 +10,15 @@
 - Emulate the mood and spacing, but do not copy the exact layout or content.
 -screenshot has been provided which you can use as a visual guide
 
+-Make sure there are enough directional queues and 
 ## Proposed Pages
 
 - Home: large photo of Sania Asif, intro placeholder text, video section with YouTube embeds.
-- Testimonials: text testimonials plus video testimonials.
-- Conditions: text/video information for anxiety, depression, OCD, addiction, and related topics. The boxes should be clickable and lead to blog style pages with a full blog on each issue. There should be a system for blogs where I can keep adding blog posts seamlessly over time. The blogs should be very acecessible and easy for site viewerrs to navigate to.
+- Testimonials: 2 text testimonials plus  3 video testimonials. The video ones should be embedded froom youtube and the text ones will be images, which when clicked open up into a big view of the image. 
+- Conditions: text/video information for anxiety, depression, OCD, addiction, and related topics. The boxes should be clickable and lead to blog style pages with a full blog on each issue. There should be a system for blogs where I can keep adding blog posts seamlessly over time. The blogs should be very acecessible and easy for site viewerrs to navigate to. 
 - Contact: contact details, appointment CTA, and optional map/social links.
+
+-Videos should be right under the first part where theres the picture and title and there should be a visual queue to scroll down and see it. 
 
 ## Open Questions
 
@@ -73,5 +76,6 @@
 
 18. Do you already know where this will be hosted?
    -github pages
+
 
 
