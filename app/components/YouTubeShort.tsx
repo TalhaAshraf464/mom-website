@@ -76,12 +76,11 @@ export function YouTubeShort({ autoPlay = false, id, index, label, title }: YouT
     }
 
     let cancelled = false;
-    let isPlayerReady = false;
     let player: YouTubePlayer | null = null;
     let isVisible = false;
 
     const updatePlayback = () => {
-      if (!player || !isPlayerReady) {
+      if (!player) {
         return;
       }
 
@@ -120,7 +119,6 @@ export function YouTubeShort({ autoPlay = false, id, index, label, title }: YouT
           events: {
             onReady: (event) => {
               player = event.target;
-              isPlayerReady = true;
               updatePlayback();
             },
           },
@@ -136,9 +134,7 @@ export function YouTubeShort({ autoPlay = false, id, index, label, title }: YouT
       if (activeAutoplayPlayer === player) {
         activeAutoplayPlayer = null;
       }
-      if (isPlayerReady) {
-        player?.pauseVideo();
-      }
+      player?.pauseVideo();
     };
   }, [autoPlay]);
 
