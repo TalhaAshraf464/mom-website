@@ -220,12 +220,16 @@ export default function Home() {
         </div>
         <div className="contact-copy">
           <p>
-            Add final contact details here for appointments, general questions,
-            or more information about online and in-person sessions.
+            For appointments or more information about online and in-person
+            sessions, you are welcome to contact Sania directly by phone call
+            or WhatsApp.
           </p>
+          <a className="contact-number" href="tel:+923001112005">
+            +92 300 111 2005
+          </a>
           <div className="contact-actions">
-            <a className="button button-light" href="tel:+00000000000">Call</a>
-            <a className="button button-outline" href="https://wa.me/00000000000">WhatsApp</a>
+            <a className="button button-light" href="tel:+923001112005">Call Sania</a>
+            <a className="button button-outline" href="https://wa.me/923001112005">WhatsApp Sania</a>
           </div>
         </div>
       </section>

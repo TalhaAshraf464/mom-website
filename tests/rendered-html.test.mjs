@@ -48,6 +48,11 @@ test("server-renders the Sania Asif homepage", async () => {
   assert.match(html, /Client testimonial 02/i);
   assert.match(html, /Client testimonial 03/i);
   assert.match(html, /From the blog/i);
+  assert.match(html, /\+92 300 111 2005/i);
+  assert.match(html, /href="tel:\+923001112005"/i);
+  assert.match(html, /href="https:\/\/wa\.me\/923001112005"/i);
+  assert.match(html, /Call Sania/i);
+  assert.match(html, /WhatsApp Sania/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
