@@ -26,7 +26,7 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">
+          <p className="eyebrow hero-credentials">
             Psychologist | Addiction Recovery Specialist | 18+ Years of Clinical Experience
           </p>
           <h1>Sania Asif</h1>
