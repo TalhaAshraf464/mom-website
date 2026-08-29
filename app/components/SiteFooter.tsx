@@ -5,7 +5,7 @@ export function SiteFooter() {
         <strong>Sania Asif</strong>
         <span>Clinical Psychologist</span>
       </div>
-      <p>Karachi, Pakistan <span aria-hidden="true">&middot;</span> Online worldwide</p>
+      <p>Online worldwide <span aria-hidden="true">&middot;</span> In-person in Karachi, Pakistan</p>
       <p className="footer-note">Contact details and social links will be added here.</p>
     </footer>
   );

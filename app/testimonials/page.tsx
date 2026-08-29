@@ -23,7 +23,7 @@ export default function TestimonialsPage() {
   return (
     <main>
       <SiteHeader current="testimonials" />
-      <section className="inner-hero inner-hero-lavender">
+      <section className="inner-hero inner-hero-lavender testimonial-page-hero">
         <p className="eyebrow">Testimonials</p>
         <h1>Words shared in confidence.</h1>
         <p>Names and identifying details can remain anonymous while preserving the meaning of each story.</p>
@@ -33,7 +33,7 @@ export default function TestimonialsPage() {
         <div className="section-heading">
           <div>
             <p className="eyebrow">Written stories</p>
-            <h2>Experiences in their own words.</h2>
+            <h2>Their journey their words.</h2>
           </div>
           <p>Replace each placeholder with approved anonymous testimonial text.</p>
         </div>
@@ -54,7 +54,7 @@ export default function TestimonialsPage() {
             <p className="eyebrow">Video stories</p>
             <h2>Listen to their experiences.</h2>
           </div>
-          <p>Personal experiences shared by clients in their own words.</p>
+          <p>Client experiences shared with care and dignity.</p>
         </div>
         <div className="video-grid testimonial-video-grid shorts-grid">
           {videoTestimonials.map((video) => (

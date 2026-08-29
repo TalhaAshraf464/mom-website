@@ -26,13 +26,19 @@ export default function Home() {
 
       <section className="hero" id="top">
         <div className="hero-copy">
-          <p className="eyebrow">18 years of clinical experience</p>
+          <p className="eyebrow">
+            Psychologist | Addiction Recovery Specialist | 18+ Years of Clinical Experience
+          </p>
           <h1>Sania Asif</h1>
           <p className="hero-role">Clinical Psychologist</p>
           <p className="hero-intro">
-            Placeholder introduction about compassionate, confidential support for
-            addiction recovery, anxiety, depression, OCD, and related concerns.
+            With over 18 years of clinical experience, I combine individual
+            counselling, family guidance and personalised aftercare to help
+            individuals and families deal with issues such as depression,
+            anxiety, OCD, addiction, schizophrenia, behavioural concerns,
+            parenting and relationship difficulties.
           </p>
+          <p className="hero-availability">Private &amp; Online Sessions | By Appointment Only</p>
           <div className="hero-actions">
             <a className="button button-primary" href="#contact">
               Contact for help or information
@@ -41,7 +47,7 @@ export default function Home() {
           </div>
           <div className="session-note">
             <span aria-hidden="true" className="status-dot" />
-            In-person in Karachi <span aria-hidden="true">&middot;</span> Online worldwide
+            Online worldwide <span aria-hidden="true">&middot;</span> In-person in Karachi
           </div>
         </div>
 
@@ -69,7 +75,7 @@ export default function Home() {
         <div className="section-heading video-heading">
           <div>
             <p className="eyebrow">Watch &amp; learn</p>
-            <h2>Start with a conversation.</h2>
+            <h2>Let&apos;s talk about it.</h2>
           </div>
           <p>
             Short, thoughtful guidance from Sania on emotional wellbeing,
@@ -95,17 +101,13 @@ export default function Home() {
           <div className="testimonial-home-intro">
             <div className="testimonial-gateway-copy">
               <p className="eyebrow">Shared in confidence</p>
-              <h2>Stories from people who found a way forward.</h2>
+              <h2>Stories of growth and recovery.</h2>
             </div>
-            <p>
-              Personal experiences can be shared anonymously, with care taken
-              to protect each person&apos;s privacy and dignity.
-            </p>
           </div>
 
           <div className="testimonial-subheading">
             <p className="eyebrow">Written experiences</p>
-            <h3>In their own words.</h3>
+            <h3>Their journey their words.</h3>
           </div>
           <div className="homepage-testimonial-stories">
             {writtenTestimonials.map((testimonial) => (
@@ -179,9 +181,9 @@ export default function Home() {
 
       <section className="practice-strip" aria-label="Practice overview">
         <div><strong>18+</strong><span>Years of experience</span></div>
-        <div><strong>Karachi</strong><span>In-person sessions</span></div>
         <div><strong>Worldwide</strong><span>Confidential online care</span></div>
-        <div><strong>English</strong><span>Session language</span></div>
+        <div><strong>Karachi</strong><span>In-person sessions</span></div>
+        <div><strong>Urdu/English</strong><span>Session languages</span></div>
       </section>
 
       <section className="intro-section" id="about">
@@ -219,7 +221,7 @@ export default function Home() {
         <div className="contact-copy">
           <p>
             Add final contact details here for appointments, general questions,
-            or more information about in-person and online sessions.
+            or more information about online and in-person sessions.
           </p>
           <div className="contact-actions">
             <a className="button button-light" href="tel:+00000000000">Call</a>

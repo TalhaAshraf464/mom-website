@@ -29,12 +29,19 @@ test("server-renders the Sania Asif homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>Sania Asif \| Clinical Psychologist<\/title>/i);
-  assert.match(html, /18 years of clinical experience/i);
-  assert.match(html, /In-person in Karachi/i);
+  assert.match(html, /Psychologist \| Addiction Recovery Specialist \| 18\+ Years of Clinical Experience/i);
+  assert.match(html, /With over 18 years of clinical experience, I combine individual/i);
   assert.match(html, /Online worldwide/i);
+  assert.match(html, /In-person in Karachi/i);
+  assert.ok(html.indexOf("Online worldwide") < html.indexOf("In-person in Karachi"));
+  assert.match(html, /Private &amp; Online Sessions \| By Appointment Only/i);
+  assert.match(html, /Urdu\/English/i);
   assert.match(html, /Scroll to watch/i);
   assert.match(html, /Watch &amp; learn/i);
-  assert.match(html, /Stories from people who found a way forward/i);
+  assert.match(html, /Let(?:&apos;|&#x27;|')s talk about it/i);
+  assert.match(html, /Stories of growth and recovery/i);
+  assert.match(html, /Their journey their words/i);
+  assert.doesNotMatch(html, /Personal experiences can be shared anonymously/i);
   assert.match(html, /Written testimonial 01/i);
   assert.match(html, /Written testimonial 02/i);
   assert.match(html, /Client testimonial 01/i);
@@ -51,6 +58,7 @@ test("renders the testimonials destination", async () => {
   assert.match(html, /Words shared in confidence/i);
   assert.match(html, /Written stories/i);
   assert.match(html, /Video stories/i);
+  assert.match(html, /Their journey their words/i);
 });
 
 test("renders the blog index and article system", async () => {

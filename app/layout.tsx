@@ -4,7 +4,7 @@ import "./globals.css";
 
 const title = "Sania Asif | Clinical Psychologist";
 const description =
-  "Clinical psychology support for addiction recovery, anxiety, depression, OCD, and related concerns in Karachi and online worldwide.";
+  "Clinical psychology support for addiction recovery, anxiety, depression, OCD, and related concerns online worldwide and in-person in Karachi.";
 
 export async function generateMetadata(): Promise<Metadata> {
   const requestHeaders = await headers();
