@@ -1,81 +1,289 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import { before, after, test } from "node:test";
+import { spawn } from "node:child_process";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
-async function render(pathname = "/") {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
+const origin = "http://localhost:3097";
+let server,
+  state,
+  output = "";
+let cookie = "";
 
-  return worker.fetch(
-    new Request(`http://localhost${pathname}`, {
-      headers: { accept: "text/html" },
-    }),
+before(async () => {
+  state = await mkdtemp(join(tmpdir(), "sania-blog-test-"));
+  server = spawn(
+    process.execPath,
+    [
+      "node_modules/wrangler/bin/wrangler.js",
+      "dev",
+      "--config",
+      "dist/server/wrangler.json",
+      "--port",
+      "3097",
+      "--local",
+      "--persist-to",
+      state,
+    ],
     {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
+      env: { ...process.env, WRANGLER_SEND_METRICS: "false", BROWSER: "none" },
+      stdio: ["ignore", "pipe", "pipe"],
     },
   );
+  server.stdout.on("data", (data) => {
+    output += data;
+  });
+  server.stderr.on("data", (data) => {
+    output += data;
+  });
+  for (let attempt = 0; attempt < 100; attempt++) {
+    try {
+      if ((await fetch(`${origin}/api/admin/session`)).ok) return;
+    } catch {}
+    await delay(250);
+  }
+  throw new Error(`Test server failed to start:\n${output}`);
+});
+
+after(async () => {
+  if (server && server.exitCode === null) {
+    const exited = new Promise((resolve) => server.once("exit", resolve));
+    server.kill("SIGTERM");
+    await Promise.race([exited, delay(3000)]);
+  }
+  if (state) await rm(state, { recursive: true, force: true });
+});
+
+async function request(
+  path,
+  { method = "GET", body, signedIn = false, requestOrigin = origin } = {},
+) {
+  return fetch(origin + path, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Origin: requestOrigin,
+      ...(signedIn ? { Cookie: cookie } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
 }
 
-test("server-renders the Sania Asif homepage", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+test("public pages, admin authentication, and complete publishing lifecycle", async (t) => {
+  await t.test(
+    "homepage has no dummy content or blog entry points before publication",
+    async () => {
+      const response = await request("/");
+      assert.equal(response.status, 200);
+      const html = await response.text();
+      assert.match(html, /Sania Asif/);
+      assert.match(html, /Online worldwide/);
+      assert.match(html, /href="tel:\+923002025956"/);
+      assert.match(html, /href="https:\/\/wa.me\/923002025956"/);
+      assert.match(html, /https:\/\/www.instagram.com\/opentalkcounselling\//);
+      assert.doesNotMatch(
+        html,
+        /href="\/blog|id="blog"|placeholder article|Approved testimonial/,
+      );
+      assert.equal((await request("/blog")).status, 404);
+      assert.equal((await request("/blog/addiction-and-recovery")).status, 404);
+      assert.equal((await request("/testimonials")).status, 200);
+      const admin = await request("/admin");
+      assert.equal(admin.status, 200);
+      assert.match(await admin.text(), /noindex/);
+    },
+  );
 
-  const html = await response.text();
-  assert.match(html, /<title>Sania Asif \| Clinical Psychologist<\/title>/i);
-  assert.match(html, /Psychologist \| Addiction Recovery Specialist \| 18\+ Years of Clinical Experience/i);
-  assert.match(html, /With over 18 years of clinical experience, I combine individual/i);
-  assert.match(html, /Online worldwide/i);
-  assert.match(html, /In-person in Karachi/i);
-  assert.ok(html.indexOf("Online worldwide") < html.indexOf("In-person in Karachi"));
-  assert.match(html, /Private &amp; Online Sessions \| By Appointment Only/i);
-  assert.match(html, /Urdu\/English/i);
-  assert.match(html, /Scroll to watch/i);
-  assert.match(html, /Watch &amp; learn/i);
-  assert.match(html, /Let(?:&apos;|&#x27;|')s talk about it/i);
-  assert.match(html, /Stories of growth and recovery/i);
-  assert.match(html, /Their journey their words/i);
-  assert.doesNotMatch(html, /Personal experiences can be shared anonymously/i);
-  assert.match(html, /Written testimonial 01/i);
-  assert.match(html, /Written testimonial 02/i);
-  assert.match(html, /Client testimonial 01/i);
-  assert.match(html, /Client testimonial 02/i);
-  assert.match(html, /Client testimonial 03/i);
-  assert.match(html, /From the blog/i);
-  assert.match(html, /\+92 300 111 2005/i);
-  assert.match(html, /href="tel:\+923001112005"/i);
-  assert.match(html, /href="https:\/\/wa\.me\/923001112005"/i);
-  assert.match(html, /Call Sania/i);
-  assert.match(html, /WhatsApp Sania/i);
-  assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
-});
+  await t.test(
+    "anonymous writes and cross-origin setup are blocked",
+    async () => {
+      assert.equal((await request("/api/admin/posts")).status, 401);
+      assert.equal(
+        (
+          await request("/api/admin/posts", {
+            method: "POST",
+            body: { title: "Intruder" },
+          })
+        ).status,
+        401,
+      );
+      assert.equal(
+        (await request("/api/admin/posts?id=anything", { method: "DELETE" }))
+          .status,
+        401,
+      );
+      assert.equal(
+        (
+          await request("/api/admin/session", {
+            method: "POST",
+            requestOrigin: "https://other.example",
+            body: {},
+          })
+        ).status,
+        403,
+      );
+    },
+  );
 
-test("renders the testimonials destination", async () => {
-  const response = await render("/testimonials");
-  assert.equal(response.status, 200);
-  const html = await response.text();
-  assert.match(html, /Words shared in confidence/i);
-  assert.match(html, /Written stories/i);
-  assert.match(html, /Video stories/i);
-  assert.match(html, /Their journey their words/i);
-});
+  const credentials = {
+    action: "setup",
+    email: "test@example.com",
+    password: "Test-only passphrase 734!",
+  };
+  await t.test(
+    "one-time setup creates a persistent authenticated session",
+    async () => {
+      const response = await request("/api/admin/session", {
+        method: "POST",
+        body: credentials,
+      });
+      assert.equal(response.status, 200, await response.clone().text());
+      const header = response.headers.get("set-cookie");
+      assert.match(header, /HttpOnly/);
+      assert.match(header, /SameSite=Strict/);
+      cookie = header.split(";")[0];
+      assert.equal(
+        (await request("/api/admin/posts", { signedIn: true })).status,
+        200,
+      );
+      assert.equal(
+        (await (await request("/api/admin/session")).json()).needsSetup,
+        false,
+      );
+      const wrong = await request("/api/admin/session", {
+        method: "POST",
+        body: { ...credentials, password: "An incorrect password" },
+      });
+      assert.equal(wrong.status, 401);
+    },
+  );
 
-test("renders the blog index and article system", async () => {
-  const [indexResponse, articleResponse] = await Promise.all([
-    render("/blog"),
-    render("/blog/addiction-and-recovery"),
-  ]);
+  let post;
+  await t.test(
+    "saved drafts stay private, including direct article URLs",
+    async () => {
+      const response = await request("/api/admin/posts", {
+        method: "POST",
+        signedIn: true,
+        body: {
+          title: "Test article",
+          category: "Wellbeing",
+          excerpt: "An integration test summary.",
+          content:
+            "## A test heading\n\nA **thoughtful** paragraph.\n\n- First item\n- Second item\n\n<script>alert('unsafe')</script>",
+          status: "draft",
+        },
+      });
+      assert.equal(response.status, 200);
+      post = (await response.json()).post;
+      assert.equal(post.slug, "test-article");
+      assert.equal((await request(`/blog/${post.slug}`)).status, 404);
+      assert.doesNotMatch(await (await request("/")).text(), /href="\/blog/);
+      const duplicate = await request("/api/admin/posts", {
+        method: "POST",
+        signedIn: true,
+        body: { ...post, id: undefined },
+      });
+      assert.equal(duplicate.status, 409);
+    },
+  );
 
-  assert.equal(indexResponse.status, 200);
-  assert.equal(articleResponse.status, 200);
-  assert.match(await indexResponse.text(), /Understanding what you are going through/i);
-  const articleHtml = await articleResponse.text();
-  assert.match(articleHtml, /Understanding the path from addiction to recovery/i);
-  assert.match(articleHtml, /In this article/i);
+  await t.test(
+    "publication reveals blog navigation, index, and safely formatted article",
+    async () => {
+      const response = await request("/api/admin/posts", {
+        method: "POST",
+        signedIn: true,
+        body: { ...post, status: "published" },
+      });
+      assert.equal(response.status, 200);
+      post = (await response.json()).post;
+      assert.ok(post.publishedAt);
+      const homepage = await (await request("/")).text();
+      assert.match(homepage, /href="\/blog"/);
+      assert.match(homepage, /id="blog"/);
+      assert.equal((await request("/blog")).status, 200);
+      const article = await request(`/blog/${post.slug}`);
+      assert.equal(article.status, 200);
+      const html = await article.text();
+      assert.match(html, /<h2>A test heading<\/h2>/);
+      assert.match(html, /<strong>thoughtful<\/strong>/);
+      assert.doesNotMatch(html, /<script>alert/);
+      assert.match(html, /&lt;script&gt;/);
+      assert.equal(
+        (
+          await request("/api/admin/posts", {
+            method: "POST",
+            signedIn: true,
+            requestOrigin: "https://other.example",
+            body: post,
+          })
+        ).status,
+        401,
+      );
+    },
+  );
+
+  await t.test(
+    "unpublishing the last article hides the blog again",
+    async () => {
+      assert.equal(
+        (
+          await request("/api/admin/posts", {
+            method: "POST",
+            signedIn: true,
+            body: { ...post, status: "draft" },
+          })
+        ).status,
+        200,
+      );
+      assert.equal((await request("/blog")).status, 404);
+      assert.equal((await request(`/blog/${post.slug}`)).status, 404);
+      assert.doesNotMatch(await (await request("/")).text(), /href="\/blog/);
+      assert.equal(
+        (
+          await request(`/api/admin/posts?id=${post.id}`, {
+            method: "DELETE",
+            signedIn: true,
+          })
+        ).status,
+        200,
+      );
+      assert.deepEqual(
+        (await (await request("/api/admin/posts", { signedIn: true })).json())
+          .posts,
+        [],
+      );
+    },
+  );
+
+  await t.test(
+    "logout revokes the session, and login works with the saved account",
+    async () => {
+      assert.equal(
+        (
+          await request("/api/admin/session", {
+            method: "DELETE",
+            signedIn: true,
+          })
+        ).status,
+        200,
+      );
+      assert.equal(
+        (await request("/api/admin/posts", { signedIn: true })).status,
+        401,
+      );
+      assert.equal(
+        (
+          await request("/api/admin/session", {
+            method: "POST",
+            body: { ...credentials, action: "login" },
+          })
+        ).status,
+        200,
+      );
+    },
+  );
 });

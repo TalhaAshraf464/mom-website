@@ -1,100 +1,67 @@
-# vinext-starter
+# Sania Asif · Open Talk Counselling
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+A warm, responsive website for Sania Asif's clinical psychology practice, with a private writing studio and a database-backed blog. Built with React 19 and vinext on Cloudflare Workers.
 
-## Prerequisites
+## Run locally
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+Requires Node.js 22.13 or newer.
 
 ```bash
 npm install
-npm run dev
-npm run build
+npm run dev -- --host 127.0.0.1 --port 3001
 ```
 
-This starter does not use `wrangler.jsonc`.
+- Website: http://localhost:3001
+- Writing studio: http://localhost:3001/admin
 
-## Included Shape
+Cloudflare's local D1 emulator starts automatically. Articles, the administrator account, and sessions persist under the ignored `.wrangler/` directory across restarts. No cloud account or production credentials are needed for local development. Local data is separate from production data.
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+## Add a blog article
 
-## Workspace Auth Headers
+1. Open `/admin`. On the first visit, create an administrator account with your email and a password of at least 12 characters. Leave the setup key empty on localhost. Subsequent visits use the same email and password to sign in.
+2. Select **Write an article**. Add a title, topic, short summary, and article text. The article URL is generated from its title on the first save; you can also choose your own URL.
+3. Use the formatting buttons for headings, bold, italic, lists, and quotes. Separate paragraphs with a blank line. **Preview** shows the formatted article without making it public.
+4. Select **Save draft** to save privately, or **Publish article** when it is ready for readers. The confirmation explains that publishing makes the article public.
+5. Open an existing article to update it. **Save changes** updates a published article. **Unpublish & move to drafts** removes it from the public website. Deletion requires confirmation and is permanent.
 
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
+The website starts with **no articles**. The blog navigation link, homepage section, blog index, and article pages become available only when at least one article is published. Draft URLs return 404. Unpublishing the last article hides the blog again. Publication changes appear on the next page load without a rebuild.
 
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
+There are no seeded or demo articles. Integration tests use their own temporary database, never the local preview's data.
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+## Hosting the admin and blog
 
-Treat the full name as optional and fall back to email when it is absent:
+The admin login and persistent blog require a server and database; GitHub Pages alone cannot run them. This repository's existing Cloudflare Workers/vinext setup supports both.
 
-```tsx
-import { headers } from "next/headers";
+- Provision a real Cloudflare D1 database and bind it as `DB`. `.openai/hosting.json` declares this binding for Sites-compatible hosting. The all-zero database ID in `vite.config.ts` is only a local emulator placeholder; a production host must supply the real binding.
+- Before the first production admin setup, configure a strong, random `ADMIN_SETUP_TOKEN` as a **Worker secret**, using your hosting platform's secrets interface or `wrangler secret put ADMIN_SETUP_TOKEN` with your production Worker config. Do not put it in Git or a client-exposed variable.
+- Open the production `/admin` page, enter the setup key, and create the administrator account. Only one administrator account can be created. After setup, the key is no longer used for login and may be removed from the host.
+- Use HTTPS. Sessions use HttpOnly, SameSite=Strict cookies, and Secure on HTTPS. Passwords use salted PBKDF2-SHA256; session tokens are random and stored only as hashes. Write requests require an authenticated session and a matching Origin. Login/setup attempts are limited in D1.
+- Blog tables initialize automatically on the first database-backed request. Back up D1 before changing the database or deploying future schema changes.
+- There is no email-based password recovery. If the password is lost, the site owner can use the D1 console to run `DELETE FROM blog_sessions; DELETE FROM blog_admin;`, then configure a new setup secret and recreate the account. This leaves articles intact and revokes existing sessions. Never do this without the owner's authorization.
 
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
+No production deployment is performed by local development or the test suite.
 
-  const displayName = fullName ?? email;
-  // ...
-}
+## Contact information
+
+The phone and WhatsApp destination is **+92 300 202 5956** (local format: **0300 2025956**). Instagram is [@opentalkcounselling](https://www.instagram.com/opentalkcounselling/). Contact links are in `app/page.tsx` and `app/components/SiteFooter.tsx`.
+
+## Checks
+
+```bash
+npm run typecheck
+npm run lint
+npm test
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+`npm test` builds the production Worker, launches it locally on port 3097 with an isolated temporary D1 database, and verifies public rendering, hidden blogs, draft privacy, authentication, cross-origin write protection, safe formatting, publication, unpublication, deletion, and logout. It stops the test Worker and removes its temporary data afterward. Keep port 3097 free when running tests.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Code map
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+- `app/page.tsx`, `app/globals.css`: public homepage and design.
+- `app/components/`: shared navigation, footer, click-to-play videos, and safe article formatting.
+- `app/admin/`, `app/studio.css`: sign-in, dashboard, editor, and private preview.
+- `app/api/admin/`: server-validated login and article management endpoints.
+- `lib/admin.ts`: password hashing and session helpers.
+- `lib/blog.ts`: D1 initialization and published-only queries.
+- `app/blog/`: public article list and reading pages.
+- `tests/rendered-html.test.mjs`: production-Worker integration coverage.
