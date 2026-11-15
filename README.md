@@ -25,9 +25,9 @@ Removing every post hides the blog again. (An admin login for writing posts in t
 
 ## Publish on GitHub Pages
 
-`.github/workflows/pages.yml` builds a static export (`npm run build:pages`, output in `out/`) and deploys it on every push to `main`.
+`.github/workflows/pages.yml` builds a static export (`npm run build:pages`, output in `out/`; the Pages action supplies the base path and site URL) and deploys it on every push to `main`.
 
-One-time setup: in the repository's **Settings → Pages**, set **Source** to **GitHub Actions**. The site is then served at https://talhaashraf464.github.io/mom-website/.
+One-time setup: in the repository's **Settings → Pages**, set **Source** to **GitHub Actions**. The site is served at https://saniaasif.org (custom domain, set in the same settings page).
 
 ## Contact information
 

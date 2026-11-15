@@ -13,9 +13,9 @@ test("exports the homepage with GitHub Pages paths", () => {
   assert.match(html, /href="tel:\+923002025956"/i);
   assert.match(html, /href="https:\/\/wa\.me\/923002025956"/i);
   assert.match(html, /instagram\.com\/opentalkcounselling/i);
-  assert.match(html, /src="\/mom-website\/sania-asif-portrait\.jpeg"/);
-  assert.match(html, /href="\/mom-website\/#contact"/);
-  assert.doesNotMatch(html, /href="\/(?!mom-website)[^"]/);
+  assert.match(html, /src="\/sania-asif-portrait\.jpeg"/);
+  assert.match(html, /href="\/#contact"/);
+  
 });
 
 test("keeps the blog hidden while no posts are published", () => {

@@ -13,7 +13,7 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern out",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
-    "build:pages": "GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=${NEXT_PUBLIC_BASE_PATH-/mom-website} next build"
+    "build:pages": "GITHUB_PAGES=true next build"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
