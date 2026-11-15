@@ -4,8 +4,6 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { YouTubeShort } from "../components/YouTubeShort";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Testimonials | Sania Asif",
   description: "Written and video testimonials from clients of Sania Asif's practice.",

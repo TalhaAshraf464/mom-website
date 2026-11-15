@@ -3,16 +3,16 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { getPublishedPosts, readingTime } from "@/lib/blog";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Blog | Sania Asif",
   description: "Accessible articles about addiction recovery, anxiety, depression, OCD, and emotional wellbeing.",
 };
 
-export default async function BlogPage() {
-  const blogPosts = await getPublishedPosts();
+export default function BlogPage() {
+  const blogPosts = getPublishedPosts();
   if (!blogPosts.length) notFound();
   return (
     <main>
@@ -27,7 +27,7 @@ export default async function BlogPage() {
         <div className="blog-grid blog-index-grid">
           {blogPosts.map((post, index) => (
             <article className="blog-card" key={post.slug}>
-              <a href={`/blog/${post.slug}`}>
+              <Link href={`/blog/${post.slug}`}>
                 <span className="blog-number">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <p className="blog-category">{post.category}</p>
@@ -35,7 +35,7 @@ export default async function BlogPage() {
                   <p>{post.excerpt}</p>
                 </div>
                 <span className="blog-read">{readingTime(post.content)} <i aria-hidden="true">&#8599;</i></span>
-              </a>
+              </Link>
             </article>
           ))}
         </div>

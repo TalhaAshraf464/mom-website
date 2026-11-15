@@ -14,8 +14,8 @@ const navigation = [
   { label: "Contact", href: "/#contact", key: "contact" },
 ] as const;
 
-export async function SiteHeader({ current }: SiteHeaderProps) {
-  const hasBlog = (await getPublishedPosts()).length > 0;
+export function SiteHeader({ current }: SiteHeaderProps) {
+  const hasBlog = getPublishedPosts().length > 0;
   return (
     <header className="site-header">
       <Link className="brand" href="/" aria-label="Sania Asif home">
@@ -28,14 +28,14 @@ export async function SiteHeader({ current }: SiteHeaderProps) {
 
       <nav className="primary-nav" aria-label="Primary navigation">
         {navigation.filter(item => item.key !== "blog" || hasBlog).map((item) => (
-          <a
+          <Link
             className={current === item.key ? "is-current" : undefined}
             aria-current={current === item.key ? "page" : undefined}
             href={item.href}
             key={item.key}
           >
             {item.label}
-          </a>
+          </Link>
         ))}
       </nav>
 

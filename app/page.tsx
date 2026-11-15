@@ -4,8 +4,7 @@ import { YouTubeShort } from "./components/YouTubeShort";
 import { getPublishedPosts } from "@/lib/blog";
 import Link from "next/link";
 import Image from "next/image";
-
-export const dynamic = "force-dynamic";
+import { asset } from "@/lib/paths";
 
 const videos = [
   { id: "PAVBdSP2xRw", number: "01", title: "Emotional Abuse" },
@@ -18,8 +17,8 @@ const videoTestimonials = [
   { id: "cFPRjL5qYJ8", number: "02", title: "Client testimonial 02" },
 ];
 
-export default async function Home() {
-  const blogPosts = await getPublishedPosts();
+export default function Home() {
+  const blogPosts = getPublishedPosts();
   return (
     <main>
       <SiteHeader current="home" />
@@ -55,7 +54,7 @@ export default async function Home() {
           <div className="portrait-accent" aria-hidden="true" />
           <figure>
             <Image
-              src="/sania-asif-portrait.jpeg"
+              src={asset("/sania-asif-portrait.jpeg")}
               alt="Sania Asif, Clinical Psychologist"
               width={720}
               height={900}
@@ -143,7 +142,7 @@ export default async function Home() {
         <div className="blog-grid">
           {blogPosts.slice(0, 3).map((post, index) => (
             <article className="blog-card" key={post.slug}>
-              <a href={`/blog/${post.slug}`}>
+              <Link href={`/blog/${post.slug}`}>
                 <span className="blog-number">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <p className="blog-category">{post.category}</p>
@@ -151,7 +150,7 @@ export default async function Home() {
                   <p>{post.excerpt}</p>
                 </div>
                 <span className="blog-read">Read article <i aria-hidden="true">&#8599;</i></span>
-              </a>
+              </Link>
             </article>
           ))}
         </div>

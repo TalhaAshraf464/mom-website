@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./studio.css";
 
 :root {
   --ink: #293f3a;
@@ -41,7 +40,6 @@ button:disabled { cursor: wait; opacity: .6; }
 .button-outline { border: 1px solid rgba(255, 254, 250, .55); }
 .button-primary:hover { background: #dfc69e; }
 .button span { font-size: 18px; }
-.admin-entry { display: block; font-size: 10px; width: max-content; margin-top: 12px; opacity: .85; }
 .footer-instagram { display: block; width: max-content; margin-top: 12px; }
 .instagram-contact { display: flex; flex-direction: column; gap: 5px; margin-top: 32px; padding-top: 24px; border-top: 1px solid #ffffff38; font-size: 12px; }
 .instagram-contact span { opacity: .75; }
