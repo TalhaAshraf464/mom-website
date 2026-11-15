@@ -1,81 +1,32 @@
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
-async function render(pathname = "/") {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
+// Runs against the static GitHub Pages export in out/ (npm run build:pages).
+const page = (path) => readFileSync(new URL(`../out/${path}`, import.meta.url), "utf8");
 
-  return worker.fetch(
-    new Request(`http://localhost${pathname}`, {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
-}
-
-test("server-renders the Sania Asif homepage", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
+test("exports the homepage with GitHub Pages paths", () => {
+  const html = page("index.html");
   assert.match(html, /<title>Sania Asif \| Clinical Psychologist<\/title>/i);
   assert.match(html, /Psychologist \| Addiction Recovery Specialist \| 18\+ Years of Clinical Experience/i);
-  assert.match(html, /With over 18 years of clinical experience, I combine individual/i);
   assert.match(html, /Online worldwide/i);
-  assert.match(html, /In-person in Karachi/i);
-  assert.ok(html.indexOf("Online worldwide") < html.indexOf("In-person in Karachi"));
-  assert.match(html, /Private &amp; Online Sessions \| By Appointment Only/i);
-  assert.match(html, /Urdu\/English/i);
-  assert.match(html, /Scroll to watch/i);
-  assert.match(html, /Watch &amp; learn/i);
-  assert.match(html, /Let(?:&apos;|&#x27;|')s talk about it/i);
-  assert.match(html, /Stories of growth and recovery/i);
-  assert.match(html, /Their journey their words/i);
-  assert.doesNotMatch(html, /Personal experiences can be shared anonymously/i);
-  assert.match(html, /Written testimonial 01/i);
-  assert.match(html, /Written testimonial 02/i);
-  assert.match(html, /Client testimonial 01/i);
-  assert.match(html, /Client testimonial 02/i);
-  assert.match(html, /Client testimonial 03/i);
-  assert.match(html, /From the blog/i);
-  assert.match(html, /\+92 300 111 2005/i);
-  assert.match(html, /href="tel:\+923001112005"/i);
-  assert.match(html, /href="https:\/\/wa\.me\/923001112005"/i);
-  assert.match(html, /Call Sania/i);
-  assert.match(html, /WhatsApp Sania/i);
-  assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
+  assert.match(html, /href="tel:\+923002025956"/i);
+  assert.match(html, /href="https:\/\/wa\.me\/923002025956"/i);
+  assert.match(html, /instagram\.com\/opentalkcounselling/i);
+  assert.match(html, /src="\/mom-website\/sania-asif-portrait\.jpeg"/);
+  assert.match(html, /href="\/mom-website\/#contact"/);
+  assert.doesNotMatch(html, /href="\/(?!mom-website)[^"]/);
 });
 
-test("renders the testimonials destination", async () => {
-  const response = await render("/testimonials");
-  assert.equal(response.status, 200);
-  const html = await response.text();
-  assert.match(html, /Words shared in confidence/i);
-  assert.match(html, /Written stories/i);
-  assert.match(html, /Video stories/i);
-  assert.match(html, /Their journey their words/i);
+test("keeps the blog hidden while no posts are published", () => {
+  const html = page("index.html");
+  assert.doesNotMatch(html, /From the blog/i);
+  assert.doesNotMatch(html, /\/blog/);
+  assert.doesNotMatch(html, /admin/i);
+  assert.match(page("blog/index.html"), /Let’s find your way back/);
 });
 
-test("renders the blog index and article system", async () => {
-  const [indexResponse, articleResponse] = await Promise.all([
-    render("/blog"),
-    render("/blog/addiction-and-recovery"),
-  ]);
-
-  assert.equal(indexResponse.status, 200);
-  assert.equal(articleResponse.status, 200);
-  assert.match(await indexResponse.text(), /Understanding what you are going through/i);
-  const articleHtml = await articleResponse.text();
-  assert.match(articleHtml, /Understanding the path from addiction to recovery/i);
-  assert.match(articleHtml, /In this article/i);
+test("exports the testimonials page and a 404 page", () => {
+  assert.match(page("testimonials/index.html"), /<title>Testimonials \| Sania Asif<\/title>/);
+  assert.ok(existsSync(new URL("../out/404.html", import.meta.url)));
 });

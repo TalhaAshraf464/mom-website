@@ -1,100 +1,53 @@
-# vinext-starter
+# Sania Asif · Open Talk Counselling
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+A warm, responsive website for Sania Asif's clinical psychology practice. Built with React 19 and Next.js, and published as a static site on GitHub Pages.
 
-## Prerequisites
+## Run locally
 
-- Node.js `>=22.13.0`
-
-## Quick Start
+Requires Node.js 22.13 or newer.
 
 ```bash
 npm install
-npm run dev
-npm run build
+npm run dev -- --host 127.0.0.1 --port 3001
 ```
 
-This starter does not use `wrangler.jsonc`.
+Open http://localhost:3001.
 
-## Included Shape
+## Add a blog article
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+Articles live in `content/blog-posts.ts`. The website starts with **no articles**: the blog navigation link, homepage section and blog pages appear only once that list has at least one post.
 
-## Workspace Auth Headers
+1. Copy the commented example in `content/blog-posts.ts` into the `blogPosts` array and fill it in. `slug` becomes the address (`/blog/<slug>`).
+2. In `content`, separate paragraphs with a blank line. Use `## ` for headings, `**bold**` and `*italic*`.
+3. Commit and push to `main`. GitHub Actions rebuilds and publishes the site in about a minute.
 
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
+Removing every post hides the blog again. (An admin login for writing posts in the browser is shelved for now; it needs a server and database, which GitHub Pages doesn't provide.)
 
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
+## Publish on GitHub Pages
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+`.github/workflows/pages.yml` builds a static export (`npm run build:pages`, output in `out/`) and deploys it on every push to `main`.
 
-Treat the full name as optional and fall back to email when it is absent:
+One-time setup: in the repository's **Settings → Pages**, set **Source** to **GitHub Actions**. The site is then served at https://talhaashraf464.github.io/mom-website/.
 
-```tsx
-import { headers } from "next/headers";
+## Contact information
 
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
+The phone and WhatsApp destination is **+92 300 202 5956** (local format: **0300 2025956**). Instagram is [@opentalkcounselling](https://www.instagram.com/opentalkcounselling/). Contact links are in `app/page.tsx` and `app/components/SiteFooter.tsx`.
 
-  const displayName = fullName ?? email;
-  // ...
-}
+## Checks
+
+```bash
+npm run typecheck
+npm run lint
+npm test
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+`npm test` builds the GitHub Pages export and checks the generated pages, including that the blog stays hidden while there are no posts.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Code map
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
-
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
-
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
-
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
-
-## Useful Commands
-
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+- `app/page.tsx`, `app/globals.css`: public homepage and design.
+- `app/components/`: shared navigation, footer, click-to-play videos, and safe article formatting.
+- `content/blog-posts.ts`: published blog articles.
+- `lib/blog.ts`: blog helpers; `lib/paths.ts`: GitHub Pages path prefix for static files.
+- `app/blog/`: public article list and reading pages.
+- `tests/rendered-html.test.mjs`: checks on the static export.

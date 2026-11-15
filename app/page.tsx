@@ -1,17 +1,15 @@
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { YouTubeShort } from "./components/YouTubeShort";
-import { blogPosts } from "@/content/blog-posts";
+import { getPublishedPosts } from "@/lib/blog";
+import Link from "next/link";
+import Image from "next/image";
+import { asset } from "@/lib/paths";
 
 const videos = [
   { id: "PAVBdSP2xRw", number: "01", title: "Emotional Abuse" },
   { id: "FXht3EScIIQ", number: "02", title: "Video about Depression" },
   { id: "Nyqhzf3zhxw", number: "03", title: "Why intelligent kids struggle with simple tasks" },
-];
-
-const writtenTestimonials = [
-  { number: "01", title: "Written testimonial 01" },
-  { number: "02", title: "Written testimonial 02" },
 ];
 
 const videoTestimonials = [
@@ -20,6 +18,7 @@ const videoTestimonials = [
 ];
 
 export default function Home() {
+  const blogPosts = getPublishedPosts();
   return (
     <main>
       <SiteHeader current="home" />
@@ -41,7 +40,7 @@ export default function Home() {
           <p className="hero-availability">Private &amp; Online Sessions | By Appointment Only</p>
           <div className="hero-actions">
             <a className="button button-primary" href="#contact">
-              Contact for help or information
+              Let’s find a way forward <span aria-hidden="true">↗</span>
             </a>
             <a className="text-link" href="#about">Explore her approach <span aria-hidden="true">&#8595;</span></a>
           </div>
@@ -54,9 +53,14 @@ export default function Home() {
         <div className="hero-portrait">
           <div className="portrait-accent" aria-hidden="true" />
           <figure>
-            <img
-              src="/sania-asif-portrait.jpeg"
+            <Image
+              src={asset("/sania-asif-portrait.jpeg")}
               alt="Sania Asif, Clinical Psychologist"
+              width={720}
+              height={900}
+              unoptimized
+              loading="eager"
+              fetchPriority="high"
             />
             <figcaption>
               <span>Clinical practice</span>
@@ -105,20 +109,6 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="testimonial-subheading">
-            <p className="eyebrow">Written experiences</p>
-            <h3>Their journey their words.</h3>
-          </div>
-          <div className="homepage-testimonial-stories">
-            {writtenTestimonials.map((testimonial) => (
-              <blockquote key={testimonial.number}>
-                <span>{testimonial.number}</span>
-                <p>Approved testimonial text will appear here.</p>
-                <cite>{testimonial.title} &middot; Shared anonymously</cite>
-              </blockquote>
-            ))}
-          </div>
-
           <div className="testimonial-subheading testimonial-video-heading">
             <p className="eyebrow">Video stories</p>
             <h3>Listen to their experiences.</h3>
@@ -133,51 +123,38 @@ export default function Home() {
                 title={video.title}
               />
             ))}
-            <article className="video-card short-video-card testimonial-video-placeholder">
-              <div className="short-video-frame testimonial-placeholder-frame" aria-label="Space reserved for a third video testimonial">
-                <span>03</span>
-                <p>Next client story</p>
-              </div>
-              <div className="video-meta">
-                <div>
-                  <span className="video-number">03</span>
-                  <h3>Client testimonial 03</h3>
-                </div>
-                <span>Reserved</span>
-              </div>
-            </article>
           </div>
         </div>
       </section>
 
-      <section className="blog-preview" id="blog">
+      {blogPosts.length > 0 && <section className="blog-preview" id="blog">
         <div className="section-heading">
           <div>
             <p className="eyebrow">From the blog</p>
             <h2>Clear guidance for difficult moments.</h2>
           </div>
           <div className="section-side-copy">
-            <p>Explore placeholder articles about common concerns, recovery, and emotional wellbeing.</p>
-            <a className="text-link" href="/blog">View all articles <span aria-hidden="true">&#8599;</span></a>
+            <p>Thoughtful perspectives on recovery, relationships, and caring for your emotional wellbeing.</p>
+            <Link className="text-link" href="/blog">View all articles <span aria-hidden="true">&#8599;</span></Link>
           </div>
         </div>
 
         <div className="blog-grid">
-          {blogPosts.map((post) => (
+          {blogPosts.slice(0, 3).map((post, index) => (
             <article className="blog-card" key={post.slug}>
-              <a href={`/blog/${post.slug}`}>
-                <span className="blog-number">{post.number}</span>
+              <Link href={`/blog/${post.slug}`}>
+                <span className="blog-number">{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <p className="blog-category">{post.category}</p>
                   <h3>{post.title}</h3>
                   <p>{post.excerpt}</p>
                 </div>
                 <span className="blog-read">Read article <i aria-hidden="true">&#8599;</i></span>
-              </a>
+              </Link>
             </article>
           ))}
         </div>
-      </section>
+      </section>}
 
       <section className="practice-strip" aria-label="Practice overview">
         <div><strong>18+</strong><span>Years of experience</span></div>
@@ -193,24 +170,22 @@ export default function Home() {
         </div>
         <div className="intro-copy">
           <p>
-            Placeholder text introducing Sania&apos;s therapeutic philosophy,
-            clinical background, and the kind of relationship she aims to build
-            with every client.
+            Reaching out can feel like a big step. Whether you are navigating
+            something new or carrying a concern for a long time, our work
+            begins with understanding your experience.
           </p>
           <p>
-            Add a second short paragraph here about privacy, dignity, practical
-            support, and working at a pace that feels manageable.
+            Together, we can explore what matters to you, build practical ways
+            to cope, and move towards change at a pace that feels manageable.
+            Your privacy, dignity, and individual needs come first.
           </p>
         </div>
       </section>
 
       <section className="approach-band">
         <p className="eyebrow">Her approach</p>
-        <blockquote>
-          &ldquo;Place a short, reassuring statement here about recovery, hope,
-          and creating meaningful change without judgment.&rdquo;
-        </blockquote>
-        <p className="quote-credit">Sania Asif, Clinical Psychologist</p>
+        <h2>You don’t have to navigate it all alone.</h2>
+        <p className="approach-description">A space to be heard. Support to move forward. Care that meets you where you are.</p>
       </section>
 
       <section className="contact-section" id="contact">
@@ -224,13 +199,14 @@ export default function Home() {
             sessions, you are welcome to contact Sania directly by phone call
             or WhatsApp.
           </p>
-          <a className="contact-number" href="tel:+923001112005">
-            +92 300 111 2005
+          <a className="contact-number" href="tel:+923002025956">
+            +92 300 202 5956
           </a>
           <div className="contact-actions">
-            <a className="button button-light" href="tel:+923001112005">Call Sania</a>
-            <a className="button button-outline" href="https://wa.me/923001112005">WhatsApp Sania</a>
+            <a className="button button-light" href="tel:+923002025956">Call Sania</a>
+            <a className="button button-outline" href="https://wa.me/923002025956" target="_blank" rel="noreferrer">WhatsApp Sania</a>
           </div>
+          <a className="instagram-contact" href="https://www.instagram.com/opentalkcounselling/" target="_blank" rel="noreferrer"><span>Stay connected on Instagram</span><strong>@opentalkcounselling ↗</strong></a>
         </div>
       </section>
 
