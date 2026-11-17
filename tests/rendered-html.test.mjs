@@ -28,5 +28,11 @@ test("keeps the blog hidden while no posts are published", () => {
 
 test("exports the testimonials page and a 404 page", () => {
   assert.match(page("testimonials/index.html"), /<title>Testimonials \| Sania Asif<\/title>/);
+  for (const path of ["index.html", "testimonials/index.html"]) {
+    const html = page(path);
+    assert.match(html, /https:\/\/i\.ytimg\.com\/vi\/jazerxo0Vls\/hqdefault\.jpg/);
+    assert.match(html, /https:\/\/i\.ytimg\.com\/vi\/ffaFkGtVALo\/hqdefault\.jpg/);
+    assert.doesNotMatch(html, /hEHHrs-zUdE|cFPRjL5qYJ8/);
+  }
   assert.ok(existsSync(new URL("../out/404.html", import.meta.url)));
 });

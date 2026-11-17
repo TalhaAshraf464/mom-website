@@ -3,16 +3,12 @@ import Link from "next/link";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { YouTubeShort } from "../components/YouTubeShort";
+import { videoTestimonials } from "@/content/testimonial-videos";
 
 export const metadata: Metadata = {
   title: "Testimonials | Sania Asif",
   description: "Written and video testimonials from clients of Sania Asif's practice.",
 };
-
-const videoTestimonials = [
-  { id: "hEHHrs-zUdE", number: "01", title: "Client testimonial 01" },
-  { id: "cFPRjL5qYJ8", number: "02", title: "Client testimonial 02" },
-];
 
 export default function TestimonialsPage() {
   return (

@@ -5,16 +5,12 @@ import { getPublishedPosts } from "@/lib/blog";
 import Link from "next/link";
 import Image from "next/image";
 import { asset } from "@/lib/paths";
+import { videoTestimonials } from "@/content/testimonial-videos";
 
 const videos = [
   { id: "PAVBdSP2xRw", number: "01", title: "Emotional Abuse" },
   { id: "FXht3EScIIQ", number: "02", title: "Video about Depression" },
   { id: "Nyqhzf3zhxw", number: "03", title: "Why intelligent kids struggle with simple tasks" },
-];
-
-const videoTestimonials = [
-  { id: "hEHHrs-zUdE", number: "01", title: "Client testimonial 01" },
-  { id: "cFPRjL5qYJ8", number: "02", title: "Client testimonial 02" },
 ];
 
 export default function Home() {
